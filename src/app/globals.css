@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    font-family: sans-serif;
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+li{
+  list-style: none;
+}
+
+.custom-scroll {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #822CE7 #1A1333;
+}
+
+/* Chrome, Edge, Safari */
+.custom-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: #1A1333;
+  border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #822CE7, #BB82FF);
+  border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #9333EA, #C084FC);
+}
+
+
+
+
+.custom-input input::placeholder {
+  color: white !important;
+  opacity: 0.7;
+}
+
+/* Input Design */
+.custom-input {
+  height: 40px !important;
+  background-color: #1D1733 !important;
+  border-color: #2A2448 !important;
+  color: white !important;
+}
+.custom-input .ant-picker-suffix {
+  color: white !important;
+}
+
+.custom-input .ant-picker-separator {
+  color: white !important;
+}
+/* Placeholder color */
+.custom-input::placeholder {
+  color: white !important;
+  opacity: 0.7;
+}
+
+.custom-delete-modal .ant-modal-content {
+  background-color: #161126 !important; /* black background */
+  border-radius: 12px;
+  border: 1px solid #2A2448;
+}
+
+.custom-delete-modal .ant-modal-header,
+
+
+.ant-pagination {
+  border: none !important;
+}
+
+
+
+
+
+/* Pagination buttons style */
+.ant-pagination-item {
+  border-radius: 15% !important; /* Make buttons circular */
+}
+
+/* Active pagination button */
+.ant-pagination-item-active {
+  background-color: #822CE71A !important; /* Active background color */
+  border-color: #2A2448 !important;  
+    /* Active border color */
+}
+
+
+.anticon {
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    padding: 2px;
+    border-radius: 5px;
+    font-style: normal;
+    line-height: 0;
+    text-align: center;
+    text-transform: none;
+    vertical-align: -0.125em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Active pagination button text */
+.ant-pagination-item-active > a {
+  color: white !important; /* Ensure active text color is white */
+}

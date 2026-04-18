@@ -1,0 +1,87 @@
+import { baseApi } from "./baseApi";
+
+const stripeApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    createOrder: builder.mutation({
+      query: () => {
+        return {
+          url: "/order/create-order",
+          method: "POST",
+        };
+      },
+      invalidatesTags: ["venue"],
+    }),
+
+    getMyOrder: builder.query({
+      query: ({ status, shift }) => {
+        return {
+          url: `/order/get-my-orders?status=${status}&shift=${shift}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["venue"],
+    }),
+
+    markUnavailable: builder.mutation({
+      query: ({ id }) => {
+        return {
+          url: `/order/mark-as-unavailable/${id}`,
+          method: "PATCH",
+        };
+      },
+      invalidatesTags: ["videos"],
+    }),
+    updateStatus: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+          url: `/order/update-status/${id}`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["videos"],
+    }),
+
+    getSingleOrder: builder.query({
+      query: ({ id }) => {
+        return {
+          url: `/order/get-single-order/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["venue"],
+    }),
+
+    updateOrderStatus: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+          url: `/order/update-status/${id}`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["videos"],
+    }),
+
+    createTipToBartender: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+          url: `/order/tip-to-bartender/${id}`,
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["venue"],
+    }),
+  }),
+});
+
+export const {
+  useCreateOrderMutation,
+  useGetMyOrderQuery,
+  useGetSingleOrderQuery,
+  useUpdateOrderStatusMutation,
+  useCreateTipToBartenderMutation,
+  useMarkUnavailableMutation,
+  useUpdateStatusMutation,
+} = stripeApi;

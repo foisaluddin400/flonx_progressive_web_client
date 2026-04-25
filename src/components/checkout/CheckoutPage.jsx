@@ -15,7 +15,7 @@ import Plus from "../icon/Plus";
 import { Minus } from "lucide-react";
 import { useCreateOrderMutation } from "@/redux/Api/stipApi";
 import { useRouter } from "next/navigation";
-
+import { PageLoader } from "../Loading";
 export default function CheckoutPage() {
   const { data: viewCart, isLoading } = useGetViewCartQuery();
   const [updateToCart] = useUpdateToCartMutation();
@@ -30,7 +30,7 @@ export default function CheckoutPage() {
     delete: new Set(),
   });
 
-  if (isLoading) return <p>Loading cart...</p>;
+  if (isLoading) return <PageLoader/>;
 
   const isLoadingAction = (productId, action) =>
     loadingStates[action].has(productId);
@@ -91,20 +91,28 @@ export default function CheckoutPage() {
     }
   };
 
-  const crateOrder = async () => {
-    try {
-      setOrderLoading(true);
-      const res = await createOrder().unwrap();
+const crateOrder = async () => {
+  try {
+    setOrderLoading(true);
+    const res = await createOrder().unwrap();
 
-      toast.success(res?.message || "Order placed successfully!");
-      router.push(res?.data?.paymentUrl);
-    } catch (err) {
-      toast.error(err?.data?.message || "Failed to place order!");
-      console.error(err);
-    } finally {
-      setOrderLoading(false);
+    const clientSecret = res?.data?.clientSecret;
+    const orderId = res?.data?.orderId;
+
+    if (!clientSecret) {
+      throw new Error("No client secret received");
     }
-  };
+
+    // 👉 redirect to payment page
+    router.push(`/payment?clientSecret=${clientSecret}&orderId=${orderId}`);
+
+  } catch (err) {
+    toast.error(err?.data?.message || "Failed to place order!");
+    console.error(err);
+  } finally {
+    setOrderLoading(false);
+  }
+};
 
   const totalPrice = viewCart?.data?.totalPrice || 0;
   const totalQuantity = viewCart?.data?.totalQuantity || 0;

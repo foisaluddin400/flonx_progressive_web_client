@@ -3,6 +3,7 @@ import React from "react";
 import Navigate from "@/components/shared/Navigate";
 import Image from "next/image";
 import { useGetCurrentShiftQuery } from "@/redux/Api/venueApi";
+import NoData from "@/components/NoData";
 
 const Page = () => {
   const { data: currentShiftData } = useGetCurrentShiftQuery();
@@ -25,9 +26,7 @@ const Page = () => {
 
       {/* NO DATA */}
       {!venue && (
-        <div className="text-center text-gray-400 mt-10">
-          No venue data found
-        </div>
+      <NoData></NoData>
       )}
 
       {/* IMAGE */}

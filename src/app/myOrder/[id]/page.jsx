@@ -5,13 +5,14 @@ import QueuedIco from "@/components/icon/QueuedIco";
 import Navigate from "@/components/shared/Navigate";
 import { useParams } from "next/navigation";
 import { useGetSingleOrderQuery } from "@/redux/Api/stipApi";
+import { PageLoader } from "@/components/Loading";
 
 const SingleOrder = () => {
   const { id } = useParams();
 
   const { data: singleOrder, isLoading } = useGetSingleOrderQuery({ id });
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <PageLoader></PageLoader>;
 
   const order = singleOrder?.data;
 

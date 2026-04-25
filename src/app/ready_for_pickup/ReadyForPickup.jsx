@@ -6,6 +6,7 @@ import {
   useGetSingleOrderQuery,
   useUpdateOrderStatusMutation,
 } from "@/redux/Api/stipApi";
+import { PageLoader } from "@/components/Loading";
 
 const ReadyForPickup = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const ReadyForPickup = () => {
   const [dragging, setDragging] = useState(false);
   const sliderRef = useRef(null);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <PageLoader></PageLoader>;
 
   const order = singleOrder?.data;
 

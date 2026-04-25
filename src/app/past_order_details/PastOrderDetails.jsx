@@ -6,13 +6,14 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
+import { PageLoader } from "@/components/Loading";
 
 const PastOrderDetails = () => {
   const { id } = useParams();
   const { data: singleOrder, isLoading } = useGetSingleOrderQuery({ id });
   const order = singleOrder?.data;
 
-  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
+  if (isLoading) return <PageLoader></PageLoader>;
 
   return (
     <div className="px-3  bg-[#0F0B1F] text-white">

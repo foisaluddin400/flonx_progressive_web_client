@@ -1,5 +1,7 @@
 "use client";
 
+import { PageLoader } from "@/components/Loading";
+import NoData from "@/components/NoData";
 import Navigate from "@/components/shared/Navigate";
 import { useGetMyOrderQuery } from "@/redux/Api/stipApi";
 import Image from "next/image";
@@ -12,7 +14,7 @@ const MyOrder = () => {
   // ✅ Fetch orders based on status
   const { data: myOrder, isLoading } = useGetMyOrderQuery({ status });
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <PageLoader></PageLoader>;
 
   return (
     <div className="px-3">
@@ -132,7 +134,7 @@ const MyOrder = () => {
 
       {/* Empty State */}
       {!myOrder?.data?.result?.length && (
-        <p className="text-center text-gray-400 mt-10">No orders found</p>
+        <NoData></NoData>
       )}
     </div>
   );

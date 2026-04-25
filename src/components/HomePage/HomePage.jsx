@@ -14,6 +14,7 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import GuestLoginEffect from "./GuestLoginEffect";
+import { PageLoader } from "../Loading";
 
 const containerStyle = {
   width: '100%',
@@ -207,9 +208,7 @@ const HomePage = () => {
 
       {/* ⏳ Loading */}
       {isLoading && (
-        <p className="text-center text-gray-400 mt-4">
-          Loading more venues...
-        </p>
+        <PageLoader></PageLoader>
       )}
     </div>
   );

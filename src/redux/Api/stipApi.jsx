@@ -23,13 +23,13 @@ const stripeApi = baseApi.injectEndpoints({
     }),
 
     markUnavailable: builder.mutation({
-      query: ({ id }) => {
+      query: ( id ) => {
         return {
           url: `/order/mark-as-unavailable/${id}`,
           method: "PATCH",
         };
       },
-      invalidatesTags: ["videos"],
+      invalidatesTags: ["venue"],
     }),
     updateStatus: builder.mutation({
       query: ({ id, data }) => {
@@ -39,7 +39,7 @@ const stripeApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags: ["videos"],
+      invalidatesTags: ["venue"],
     }),
 
     getSingleOrder: builder.query({
@@ -60,7 +60,7 @@ const stripeApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags: ["videos"],
+      invalidatesTags: ["venue"],
     }),
 
     createTipToBartender: builder.mutation({

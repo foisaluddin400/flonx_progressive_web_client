@@ -16,7 +16,7 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers) => {
     const token = getToken();
     if (token) {
-      headers.set("Authorization", token); // তোমার backend যদি Bearer চায় → `Bearer ${token}`
+      headers.set("Authorization", token); 
     }
     return headers;
   },
@@ -26,7 +26,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithAutoLogin = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  // 🔥 যদি token expire (401)
+ 
   if (result?.error?.status === 401) {
     try {
       // deviceId get/create
@@ -68,10 +68,10 @@ const baseQueryWithAutoLogin = async (args, api, extraOptions) => {
   return result;
 };
 
-// ✅ use this instead of fetchBaseQuery
+
 export const baseApi = createApi({
   reducerPath: "api",
-  baseQuery: baseQueryWithAutoLogin, // 🔥 CHANGE HERE
+  baseQuery: baseQueryWithAutoLogin, 
   tagTypes: ["profile", "event", "videos"],
   endpoints: () => ({}),
 });

@@ -73,6 +73,7 @@ const [login, { isLoading }] = useLoginAdminMutation();
         console.log("Login Success:", res);
         
         toast.success(res?.message);
+        router.push(`/shiftDetails/${id}`);
 
         // remember me
         if (formValues.remember) {
@@ -87,10 +88,10 @@ const [login, { isLoading }] = useLoginAdminMutation();
           localStorage.removeItem("loginData");
         }
       } else {
-        message.error("You are not authorized to login!");
+        toast.error("Access denied: You are not a bartender");
       }
     } catch (err) {
-      message.error(err?.data?.message || "Login failed");
+      toast.error(err?.data?.message || "Login failed");
       console.error("Login Error:", err);
     }
   };

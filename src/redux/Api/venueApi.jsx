@@ -94,7 +94,7 @@ const venueApi = baseApi.injectEndpoints({
           method: "DELETE",
         };
       },
-      invalidatesTags: ["updateProfile"],
+      invalidatesTags: ["venue"],
     }),
 
 

@@ -40,6 +40,16 @@ const venueApi = baseApi.injectEndpoints({
         },
       }),
     }),
+    getSingleProduct: builder.query({
+      query: ({ id }) => {
+        return {
+          url: `/product/single-product/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["venue"],
+    }),
+
 
     addToCart: builder.mutation({
       query: (data) => {
@@ -124,6 +134,6 @@ export const {
   useUpdateToCartMutation,
   useDeleteAllCartMutation,
   useRemoveToCartMutation,
-  
+  useGetSingleProductQuery,
   useGetCurrentShiftQuery,
 } = venueApi;

@@ -29,7 +29,9 @@ const CheckoutForm = () => {
   return (
    <form onSubmit={handleSubmit}>
       <PaymentElement />
-      <button type="submit">Pay</button>
+      <button className="w-full flex justify-center items-center gap-4 py-3 rounded-full
+            bg-gradient-to-br from-[#BB82FF] to-[#822CE7]
+            shadow-lg mt-3" type="submit">Pay</button>
     </form>
   )
 }

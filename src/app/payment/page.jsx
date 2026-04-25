@@ -6,11 +6,12 @@ import { stripePromise } from "@/lib/stripe";
 import CheckoutForm from "./CheckoutForm";
 
 import Navigate from "@/components/shared/Navigate";
+import NoData from "@/components/NoData";
 const page = () => {
       const searchParams = useSearchParams();
   const clientSecret = searchParams.get("clientSecret");
 
-  if (!clientSecret) return <p>No payment data</p>;
+  if (!clientSecret) return <NoData></NoData>;
 
   return (
    <div>

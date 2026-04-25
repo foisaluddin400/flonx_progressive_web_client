@@ -35,6 +35,7 @@ export default function Venue() {
 
   const { data: getSingleVenue, isLoading: isVenueLoading } =
     useGetSingleVenueQuery({ id });
+    console.log(getSingleVenue)
 
   const { data: getSinglecategory, isLoading: isCategoryLoading } =
     useGetCategoryQuery({ id });

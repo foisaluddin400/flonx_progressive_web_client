@@ -2,7 +2,7 @@
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseUrl = "http://10.10.20.9:3500/api/v1";
+const baseUrl = "https://rnj64vmh-3500.inc1.devtunnels.ms/api/v1";
 
 // ✅ get token
 const getToken = () => {

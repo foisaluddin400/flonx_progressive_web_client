@@ -119,7 +119,7 @@ const HomePage = () => {
       {/* 🔍 Search */}
       <div className="grid grid-cols-3 gap-3 items-center mt-4">
         <Input
-          placeholder="Search bartender..."
+          placeholder="Search Venue..."
           className="custom-input"
           value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}

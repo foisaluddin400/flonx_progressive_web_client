@@ -14,6 +14,7 @@ const CheckoutForm = () => {
     e.preventDefault();
 
     if (!stripe || !elements) return;
+    console.log(stripe)
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -21,6 +22,7 @@ const CheckoutForm = () => {
         return_url: "https://flonx-progressive-web-client.vercel.app/checkout/payment_successfull",
       },
     });
+    console.log(error)
 
     if (error) {
       console.log(error.message);

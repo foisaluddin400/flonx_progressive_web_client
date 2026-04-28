@@ -8,7 +8,6 @@ import NoData from "@/components/NoData";
 const Page = () => {
   const { data: currentShiftData } = useGetCurrentShiftQuery();
 
-  // ✅ pick shift (current অথবা upcoming)
   const shift =
     currentShiftData?.data?.currentShift ||
     currentShiftData?.data?.upcomingShift;

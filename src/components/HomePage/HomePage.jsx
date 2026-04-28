@@ -38,22 +38,46 @@ const HomePage = () => {
   // 🔥 all venues for infinite scroll
   const [allVenues, setAllVenues] = useState([]);
 
-  const { data: venue, isLoading } = useGetVenueQuery({
+const { data: venue, isLoading } = useGetVenueQuery(
+  {
     searchTerm,
     page: currentPage,
     limit: pageSize,
     lat,
     lng,
     maxDistance,
-  });
-
+  },
+  {
+    skip: !lat || !lng, // ✅ important
+  }
+);
   console.log(venue)
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
+useEffect(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const currentLat = pos.coords.latitude;
+        const currentLng = pos.coords.longitude;
 
+        setLat(currentLat);
+        setLng(currentLng);
+        setPosition({ lat: currentLat, lng: currentLng });
+
+        // reset for fresh load
+        setCurrentPage(1);
+        setAllVenues([]);
+      },
+      (err) => {
+        console.error("Location permission denied", err);
+      }
+    );
+  }
+}, []);
   // ✅ merge data
   useEffect(() => {
     if (venue?.data?.result) {
@@ -84,36 +108,35 @@ const HomePage = () => {
   }, [currentPage, venue, isLoading]);
 
   // ✅ location select
-  const handlePlaceChanged = () => {
-    if (autocomplete) {
-      const place = autocomplete.getPlace();
-      if (place?.geometry) {
-        const newLat = place.geometry.location.lat();
-        const newLng = place.geometry.location.lng();
+const handlePlaceChanged = () => {
+  if (autocomplete) {
+    const place = autocomplete.getPlace();
+    if (place?.geometry) {
+      const newLat = place.geometry.location.lat();
+      const newLng = place.geometry.location.lng();
 
-        setLat(newLat);
-        setLng(newLng);
-        setPosition({ lat: newLat, lng: newLng });
+      setLat(newLat);
+      setLng(newLng);
+      setPosition({ lat: newLat, lng: newLng });
 
-        // 🔥 reset
-        setCurrentPage(1);
-        setAllVenues([]);
+      setCurrentPage(1);
+      setAllVenues([]);
 
-        map?.panTo({ lat: newLat, lng: newLng });
-        setLocationValue(place.formatted_address);
-      }
+      map?.panTo({ lat: newLat, lng: newLng });
+      setLocationValue(place.formatted_address);
     }
-  };
+  }
+};
 
   // ✅ search reset
-  const handleSearch = (value) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-    setAllVenues([]);
-  };
+const handleSearch = (value) => {
+  setSearchTerm(value);
+  setCurrentPage(1);
+  setAllVenues([]);
+};
 
   return (
-    <div className="space-y-4 mt-20">
+    <div className="space-y-4 mt-20 p-3">
       <GuestLoginEffect />
 
       {/* 🔍 Search */}
@@ -139,17 +162,18 @@ const HomePage = () => {
           </Autocomplete>
         )}
 
-        <Input
-          type="number"
-          placeholder="Max Distance (km)"
-          className="custom-input"
-          value={maxDistance}
-          onChange={(e) => {
-            setMaxDistance(Number(e.target.value));
-            setCurrentPage(1);
-            setAllVenues([]);
-          }}
-        />
+      <Input
+  type="number"
+  placeholder="Max Distance (km)"
+  className="custom-input"
+  value={maxDistance}
+  disabled={!lat || !lng} // ✅ disable
+  onChange={(e) => {
+    setMaxDistance(Number(e.target.value));
+    setCurrentPage(1);
+    setAllVenues([]);
+  }}
+/>
       </div>
 
       {/* 🗺️ Map */}

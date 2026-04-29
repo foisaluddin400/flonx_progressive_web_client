@@ -10,6 +10,7 @@ import NoData from "@/components/NoData";
 const PaymentPage = () => {
       const searchParams = useSearchParams();
   const clientSecret = searchParams.get("clientSecret");
+  console.log(clientSecret)
 
   if (!clientSecret) return <NoData></NoData>;
 

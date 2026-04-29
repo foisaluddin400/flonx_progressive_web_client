@@ -3,10 +3,11 @@ import { baseApi } from "./baseApi";
 const stripeApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createOrder: builder.mutation({
-      query: () => {
+      query: (data) => {
         return {
           url: "/order/create-order",
           method: "POST",
+          body: data,
         };
       },
       invalidatesTags: ["venue"],
@@ -22,8 +23,18 @@ const stripeApi = baseApi.injectEndpoints({
       providesTags: ["venue"],
     }),
 
+    getCustomerSavePayment: builder.query({
+      query: () => {
+        return {
+          url: `/customer/payment-methods`,
+          method: "GET",
+        };
+      },
+      providesTags: ["venue"],
+    }),
+
     markUnavailable: builder.mutation({
-      query: ( id ) => {
+      query: (id) => {
         return {
           url: `/order/mark-as-unavailable/${id}`,
           method: "PATCH",
@@ -84,4 +95,5 @@ export const {
   useCreateTipToBartenderMutation,
   useMarkUnavailableMutation,
   useUpdateStatusMutation,
+  useGetCustomerSavePaymentQuery,
 } = stripeApi;

@@ -13,7 +13,10 @@ import Navigate from "../shared/Navigate";
 import { toast } from "react-toastify";
 import Plus from "../icon/Plus";
 import { Minus } from "lucide-react";
-import { useCreateOrderMutation, useGetCustomerSavePaymentQuery } from "@/redux/Api/stipApi";
+import {
+  useCreateOrderMutation,
+  useGetCustomerSavePaymentQuery,
+} from "@/redux/Api/stipApi";
 import { useRouter } from "next/navigation";
 import { PageLoader } from "../Loading";
 import NoData from "../NoData";
@@ -21,11 +24,11 @@ export default function CheckoutPage() {
   const { data: viewCart, isLoading } = useGetViewCartQuery();
   const [updateToCart] = useUpdateToCartMutation();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCard] = useState(null);
   const router = useRouter();
   const [removeCartItem] = useRemoveToCartMutation();
-  const {data: savedCards} = useGetCustomerSavePaymentQuery()
-  console.log(savedCards)
+  const { data: savedCards } = useGetCustomerSavePaymentQuery();
+  console.log(savedCards);
   const [createOrder] = useCreateOrderMutation();
   const [orderLoading, setOrderLoading] = useState(false);
   // Track loading for each action type per item
@@ -97,38 +100,37 @@ const [selectedCard, setSelectedCard] = useState(null);
   };
 
   const crateOrder = async (paymentMethodId = "") => {
-    console.log(paymentMethodId)
-  try {
-    setOrderLoading(true);
+    console.log(paymentMethodId);
+    try {
+      setOrderLoading(true);
 
-    const res = await createOrder({
-      paymentMethodId,
-    }).unwrap();
+      const res = await createOrder({
+        paymentMethodId,
+      }).unwrap();
 
-    console.log(res)
+      console.log(res);
 
-    const clientSecret = res?.data?.clientSecret;
-    const orderId = res?.data?.orderId;
+      const clientSecret = res?.data?.clientSecret;
+      const orderId = res?.data?.orderId;
 
-    console.log(clientSecret, orderId)
+      console.log(clientSecret, orderId);
 
-    if (!clientSecret) {
-      throw new Error("No client secret received");
+      if (!clientSecret) {
+        throw new Error("No client secret received");
+      }
+
+      if (paymentMethodId) {
+        router.push(`/payment_successfull?orderId=${orderId}`);
+      } else {
+        router.push(`/payment?clientSecret=${clientSecret}&orderId=${orderId}`);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || "Failed to place order!");
+    } finally {
+      setOrderLoading(false);
     }
-
-    if (paymentMethodId) {
-      router.push(`/payment_successfull?orderId=${orderId}`);
-    } else {
-
-      router.push(`/payment?clientSecret=${clientSecret}&orderId=${orderId}`);
-    }
-  } catch (err) {
-    console.log(err)
-    toast.error(err?.data?.message || "Failed to place order!");
-  } finally {
-    setOrderLoading(false);
-  }
-};
+  };
 
   const totalPrice = viewCart?.data?.totalPrice || 0;
   const totalQuantity = viewCart?.data?.totalQuantity || 0;
@@ -258,13 +260,13 @@ const [selectedCard, setSelectedCard] = useState(null);
         </div>
 
         <button
-        onClick={() => {
-  if (savedCards?.data?.length > 0) {
-    setShowPaymentModal(true);
-  } else {
-    crateOrder(""); 
-  }
-}}
+          onClick={() => {
+            if (savedCards?.data?.length > 0) {
+              setShowPaymentModal(true);
+            } else {
+              crateOrder("");
+            }
+          }}
           disabled={orderLoading}
           className="bg-white text-black px-6 py-2 rounded-full font-semibold flex items-center justify-center gap-2 disabled:opacity-70"
         >
@@ -278,92 +280,87 @@ const [selectedCard, setSelectedCard] = useState(null);
           )}
         </button>
 
+        {showPaymentModal && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div className="bg-[#1A0E2E] w-[90%] max-w-md rounded-2xl p-5 border border-[#2A2448]">
+              <h2 className="text-lg font-bold text-white mb-4">
+                Previous Used Cards
+              </h2>
 
-{showPaymentModal && (
-  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-    <div className="bg-[#1A0E2E] w-[90%] max-w-md rounded-2xl p-5 border border-[#2A2448]">
-      
-      <h2 className="text-lg font-bold text-white mb-4">
-        Previous Used Cards
-      </h2>
+              <p className="text-sm text-gray-400 mb-4">Total: ${totalPrice}</p>
 
-      <p className="text-sm text-gray-400 mb-4">
-        Total: ${totalPrice}
-      </p>
+              {/* Cards List */}
+              <div className="space-y-3 max-h-[250px] overflow-y-auto">
+                {savedCards?.data?.map((card) => (
+                  <div
+                    key={card.id}
+                    onClick={() => setSelectedCard(card.id)}
+                    className={`p-4 rounded-xl border cursor-pointer ${
+                      selectedCard === card.id
+                        ? "border-purple-500 bg-purple-900/30"
+                        : "border-[#2A2448]"
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-white font-semibold uppercase">
+                          {card.brand}
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          **** **** **** {card.last4}
+                        </p>
+                        <p className="text-gray-500 text-xs">
+                          Exp: {card.expMonth}/{card.expYear}
+                        </p>
+                      </div>
 
-      {/* Cards List */}
-      <div className="space-y-3 max-h-[250px] overflow-y-auto">
-        {savedCards?.data?.map((card) => (
-          <div
-            key={card.id}
-            onClick={() => setSelectedCard(card.id)}
-            className={`p-4 rounded-xl border cursor-pointer ${
-              selectedCard === card.id
-                ? "border-purple-500 bg-purple-900/30"
-                : "border-[#2A2448]"
-            }`}
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-white font-semibold uppercase">
-                  {card.brand}
-                </p>
-                <p className="text-gray-400 text-sm">
-                  **** **** **** {card.last4}
-                </p>
-                <p className="text-gray-500 text-xs">
-                  Exp: {card.expMonth}/{card.expYear}
-                </p>
+                      {selectedCard === card.id && (
+                        <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {selectedCard === card.id && (
-                <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
-              )}
+              {/* Actions */}
+              <div className="mt-5 space-y-3">
+                {/* Pay Button */}
+                <button
+                  onClick={() => {
+                    if (!selectedCard) {
+                      toast.error("Please select a card");
+                      return;
+                    }
+                    setShowPaymentModal(false);
+                    crateOrder(selectedCard);
+                  }}
+                  className="w-full bg-white text-black py-2 rounded-full font-semibold"
+                >
+                  Pay
+                </button>
+
+                {/* New Card */}
+                <button
+                  onClick={() => {
+                    setShowPaymentModal(false);
+                    crateOrder("");
+                  }}
+                  className="w-full border border-white text-white py-2 rounded-full"
+                >
+                  Pay with New Card
+                </button>
+
+                {/* Cancel */}
+                <button
+                  onClick={() => setShowPaymentModal(false)}
+                  className="w-full text-gray-400 text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Actions */}
-      <div className="mt-5 space-y-3">
-        {/* Pay Button */}
-        <button
-          onClick={() => {
-            if (!selectedCard) {
-              toast.error("Please select a card");
-              return;
-            }
-            setShowPaymentModal(false);
-            crateOrder(selectedCard);
-          }}
-          className="w-full bg-white text-black py-2 rounded-full font-semibold"
-        >
-          Pay
-        </button>
-
-        {/* New Card */}
-        <button
-          onClick={() => {
-            setShowPaymentModal(false);
-            crateOrder("");
-          }}
-          className="w-full border border-white text-white py-2 rounded-full"
-        >
-          Pay with New Card
-        </button>
-
-        {/* Cancel */}
-        <button
-          onClick={() => setShowPaymentModal(false)}
-          className="w-full text-gray-400 text-sm"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+        )}
       </div>
     </div>
   );

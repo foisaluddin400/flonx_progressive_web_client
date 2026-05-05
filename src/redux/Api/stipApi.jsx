@@ -33,6 +33,16 @@ const stripeApi = baseApi.injectEndpoints({
       providesTags: ["venue"],
     }),
 
+    getCustomerSavePayment: builder.query({
+      query: () => {
+        return {
+          url: `/customer/payment-methods`,
+          method: "GET",
+        };
+      },
+      providesTags: ["venue"],
+    }),
+
     markUnavailable: builder.mutation({
       query: (id) => {
         return {

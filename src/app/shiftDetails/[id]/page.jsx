@@ -100,7 +100,7 @@ const Page = () => {
 
   const getBgColor = (status) => {
     switch (status) {
-      case "QUEUED": return "bg-[#F97316]";
+      case "QUEUED": return "bg-[#FFB020]";
       case "IN_PROGRESS": return "bg-[#22C55E]";
       case "READY_FOR_PIC": return "bg-[#822CE7]";
       case "PICKED": return "bg-[#3D8BFF]";

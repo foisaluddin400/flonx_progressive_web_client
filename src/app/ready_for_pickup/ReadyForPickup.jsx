@@ -13,6 +13,7 @@ const ReadyForPickup = () => {
   const router = useRouter();
 
   const { data: singleOrder, isLoading } = useGetSingleOrderQuery({ id });
+  console.log(singleOrder) 
   const [updateOrderStatus] = useUpdateOrderStatusMutation();
 
   const [position, setPosition] = useState(0);

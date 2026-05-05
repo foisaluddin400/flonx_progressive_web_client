@@ -2,11 +2,11 @@
   "name": "bd-calling-interview-task",
   "version": "0.1.0",
   "private": true,
- "scripts": {
-  "dev": "next dev --webpack",
-  "build": "next build",
-  "start": "next start"
-},
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build",
+    "start": "next start"
+  },
   "dependencies": {
     "@react-google-maps/api": "^2.20.8",
     "@reduxjs/toolkit": "^2.9.0",
@@ -23,6 +23,7 @@
     "react-final-form": "^6.5.9",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.3.0",
+    "react-otp-input": "^3.1.1",
     "react-redux": "^9.2.0",
     "react-responsive-carousel": "^3.2.23",
     "react-toastify": "^10.0.6",

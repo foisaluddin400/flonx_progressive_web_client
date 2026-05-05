@@ -95,12 +95,17 @@ const [login, { isLoading }] = useLoginAdminMutation();
       console.error("Login Error:", err);
     }
   };
+  const handleForgetPassword = () => {
+  if (id) {
+    localStorage.setItem("venueId", id);
+  }
+};
   return (
     <div className="flex container m-auto bg-[#0F0B1A] justify-center items-center min-h-screen px-4 lg:px-0">
       <div className="w-full">
         {/* Shop Card */}
         <div className="bg-[#1A0E2E] border p-2 border-[#2A2448] rounded-2xl mb-6">
-          <Link href={"/shopDetails"}>
+          <Link href={`/shopDetails/${id}`}>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <Image
@@ -182,16 +187,20 @@ const [login, { isLoading }] = useLoginAdminMutation();
               Remember me
             </label>
 
-            <Link href={"/forgot-password"} className="text-sm text-[#9D5BFF]">
-              Forget password?
-            </Link>
+            <Link
+  href={`/auth/forget-password`}
+  onClick={handleForgetPassword}
+  className="text-sm text-[#9D5BFF]"
+>
+  Forget password?
+</Link>
           </div>
 
           {/* Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-3 rounded text-white flex justify-center items-center gap-2 ${
+            className={`w-full mt-3 bg-gradient-to-tr from-[#822CE7] to-[#BB82FF] py-3 text-white rounded-full shadow-md hover:opacity-90 transition ${
               isLoading ? "bg-[#b879ff]" : "bg-[#822CE7] hover:bg-[#4a0e8f]"
             }`}
           >

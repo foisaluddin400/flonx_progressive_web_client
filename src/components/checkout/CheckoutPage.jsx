@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+
 
 import {
   useGetViewCartQuery,
@@ -120,7 +120,7 @@ export default function CheckoutPage() {
       }
 
       if (paymentMethodId) {
-        router.push(`/payment_successfull?orderId=${orderId}`);
+        router.push(`/checkout/payment_successfull?payment_intent=${orderId}`);
       } else {
         router.push(`/payment?clientSecret=${clientSecret}&orderId=${orderId}`);
       }

@@ -49,7 +49,9 @@ export default function Venue() {
   };
 
   const { data: singleVenueProducts, isLoading: isProductsLoading, isFetching: isProductsFetching } =
-    useGetSingleVenueProductsQuery(queryParams);
+  useGetSingleVenueProductsQuery(queryParams, {
+    refetchOnMountOrArgChange: true, 
+  });
 
   useEffect(() => {
     if (singleVenueProducts?.data?.result) {
@@ -60,31 +62,23 @@ export default function Venue() {
       }
     }
   }, [singleVenueProducts, currentPage]);
+useEffect(() => {
+  setCurrentPage(1);
+  setAllVenues([]);
+}, [searchTerm, category]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const fullHeight = document.documentElement.scrollHeight;
 
-      if (scrollTop + windowHeight >= fullHeight - 100) {
-        if (
-          singleVenueProducts?.data?.meta?.totalPages > currentPage &&
-          !isProductsLoading
-        ) {
-          setCurrentPage((prev) => prev + 1);
-        }
-      }
-    };
+useEffect(() => {
+  if (singleVenueProducts?.data?.result) {
+    if (currentPage === 1) {
+      setAllVenues(singleVenueProducts.data.result);
+    } else {
+      setAllVenues((prev) => [...prev, ...singleVenueProducts.data.result]);
+    }
+  }
+}, [singleVenueProducts, currentPage, category, searchTerm]); 
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [currentPage, singleVenueProducts, isProductsLoading]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-    setAllVenues([]);
-  }, [searchTerm, category]);
 
   const handleAddToCart = async (productId) => {
     try {
@@ -107,8 +101,7 @@ export default function Venue() {
   }
 
   // ================= FIRST PAGE PRODUCTS LOADING =================
-  const isFirstLoad = isProductsLoading && currentPage === 1;
-
+  const isFirstLoad = (isProductsLoading || isProductsFetching) && allVenues.length === 0;
   return (
     <div className="pt-16 px-3 pb-40">
       <Navbar />

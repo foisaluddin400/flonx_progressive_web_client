@@ -12,9 +12,7 @@ const CheckoutForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!stripe || !elements) return;
-    console.log(stripe);
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -23,15 +21,29 @@ const CheckoutForm = () => {
           "https://flonx-progressive-web-client.vercel.app/checkout/payment_successfull",
       },
     });
-    console.log(error);
 
     if (error) {
       console.log(error.message);
     }
   };
+
   return (
     <form onSubmit={handleSubmit}>
-      <PaymentElement />
+      <PaymentElement
+        options={{
+      
+          paymentMethodOrder: ["card"],
+
+    
+          layout: {
+            type: "accordion",
+            defaultCollapsed: false,
+            
+           radios: "never",
+            spacedAccordionItems: false,
+          },
+        }}
+      />
       <button
         className="w-full flex justify-center items-center gap-4 py-3 rounded-full
             bg-gradient-to-br from-[#BB82FF] to-[#822CE7]

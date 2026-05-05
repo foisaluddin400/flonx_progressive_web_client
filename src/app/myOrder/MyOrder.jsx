@@ -13,6 +13,7 @@ const MyOrder = () => {
 
   // ✅ Fetch orders based on status
   const { data: myOrder, isLoading } = useGetMyOrderQuery({ status });
+  console.log(myOrder)
 
   if (isLoading) return <PageLoader></PageLoader>;
 

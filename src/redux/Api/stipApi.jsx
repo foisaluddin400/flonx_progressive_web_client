@@ -14,9 +14,9 @@ const stripeApi = baseApi.injectEndpoints({
     }),
 
     getMyOrder: builder.query({
-      query: ({ status, shift }) => {
+      query: ({ status }) => {
         return {
-          url: `/order/get-my-orders?status=${status}&shift=${shift}`,
+          url: `/order/get-my-orders?status=${status}`,
           method: "GET",
         };
       },

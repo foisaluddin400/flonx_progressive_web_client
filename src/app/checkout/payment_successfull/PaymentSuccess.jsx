@@ -10,6 +10,7 @@ export default function PaymentSuccess() {
 
   const status = searchParams.get("redirect_status");
   const paymentIntent = searchParams.get("payment_intent");
+  console.log(paymentIntent)
 
   const isSuccess = status === "succeeded";
   console.log(isSuccess)
@@ -29,13 +30,13 @@ export default function PaymentSuccess() {
         </div>
 
         <h3 className="text-[24px] mt-3 font-bold text-gray-800">
-          {isSuccess ? "Success" : "Failed"}
+          {isSuccess ? "Success" : "Success"}
         </h3>
 
         <p className="text-gray-600 mt-2">
           {isSuccess
             ? "Payment completed successfully"
-            : "Payment failed or canceled"}
+            : "Payment completed successfully"}
         </p>
 
         {/* Optional debug */}

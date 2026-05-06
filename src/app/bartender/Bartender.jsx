@@ -39,47 +39,54 @@ const Bartender = () => {
   ========================= */
 
   const createOrder = async (paymentMethodId = "") => {
-    let finalAmount = selected;
+  console.log(paymentMethodId);
 
-    if (showCustom) {
-      finalAmount = Number(customAmount);
-    }
+  let finalAmount = selected;
 
-    if (!finalAmount || finalAmount <= 0) {
-      toast.error("Please select or enter amount");
-      return;
-    }
+  if (showCustom) {
+    finalAmount = Number(customAmount);
+  }
 
-    try {
-      const res = await createTipToBartender({
-        id,
-        data: { amount: finalAmount },
-      }).unwrap();
+  if (!finalAmount || finalAmount <= 0) {
+    toast.error("Please select or enter amount");
+    return;
+  }
 
-      const clientSecret = res?.data?.clientSecret;
-      const orderId = res?.data?.orderId;
+  try {
+    // ✅ dynamic data
+    const payload = paymentMethodId
+      ? { amount: finalAmount, paymentMethodId }
+      : { amount: finalAmount };
 
+    const res = await createTipToBartender({
+      id,
+      data: payload,
+    }).unwrap();
+
+    const clientSecret = res?.data?.clientSecret;
+    const orderId = res?.data?.orderId;
+
+    toast.success(res?.message || "Tip added successfully!");
+
+    if (paymentMethodId) {
+      router.push(
+        `/checkout/payment_successfull?payment_intent=${orderId}`
+      );
+    } else {
       if (!clientSecret) {
         throw new Error("No client secret received");
       }
 
-      toast.success(res?.message || "Tip added successfully!");
-
-      if (paymentMethodId) {
-        router.push(
-          `/checkout/payment_successfull?payment_intent=${orderId}`
-        );
-      } else {
-        router.push(
-          `/payment?clientSecret=${clientSecret}&orderId=${orderId}`
-        );
-      }
-    } catch (err) {
-      toast.error(
-        err?.data?.message || "Something went wrong"
+      router.push(
+        `/payment?clientSecret=${clientSecret}&orderId=${orderId}`
       );
     }
-  };
+  } catch (err) {
+    toast.error(
+      err?.data?.message || "Something went wrong"
+    );
+  }
+};
 
   return (
     <div className="px-3">

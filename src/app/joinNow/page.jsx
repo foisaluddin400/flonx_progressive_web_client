@@ -10,6 +10,7 @@ import Mark from "@/components/icon/Mark";
 import HomeIco from "@/components/icon/HomeIco";
 import HowWork from "./HowWork";
 import Navigate from "@/components/shared/Navigate";
+import Link from "next/link";
 const JoinNow = () => {
 
 
@@ -72,9 +73,10 @@ const JoinNow = () => {
             </h1>
           </ul>
 
+          <Link href="">
           <button className="mt-8 w-full py-3 rounded-full bg-gradient-to-r from-[#822CE7] to-[#BB82FF] font-semibold shadow-lg hover:scale-[1.02] active:scale-95 transition">
             Join as Bartender
-          </button>
+          </button></Link>
         </div>
 
         {/* Card 2 */}
@@ -104,10 +106,11 @@ const JoinNow = () => {
             </h1>
           </ul>
 
+          <Link href={'https://flonx-venue-owner-dashboard-client.vercel.app/joinAs'}>
           <button className="mt-8 w-full py-3 rounded-full bg-gradient-to-r from-[#822CE7] to-[#BB82FF] font-semibold shadow-lg hover:scale-[1.02] active:scale-95 transition">
         Join as a venue
 
-          </button>
+          </button></Link>
         </div>
       </div>
       <HowWork></HowWork>

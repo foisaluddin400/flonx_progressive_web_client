@@ -8,22 +8,33 @@ export const Navbar = () => {
       <div className="flex items-center justify-between px-3 md:px-12 py-4">
 
         {/* Left - Logo */}
+        <Link href={'/'}>
         <Image 
           src={logo}
           alt="Logo"
           width={120}
           height={40}
           priority
-        />
+        /></Link>
 
         {/* Right - Join Button */}
-        <Link href={'/joinNow'}>
+        <div className=" flex gap-2">
+          <Link href={'/myOrder'}>
+        <button className="px-6 py-2 rounded-full text-[#BB82FF] font-semibold
+          border border-[#822CE7]
+          hover:scale-105 active:scale-95
+          transition-all duration-300 shadow-md hover:shadow-lg">
+          My Order
+        </button></Link>
+
+          <Link href={'/joinNow'}>
         <button className="px-6 py-2 rounded-full text-white font-semibold
           bg-gradient-to-tr from-[#822CE7] to-[#BB82FF]
           hover:scale-105 active:scale-95
           transition-all duration-300 shadow-md hover:shadow-lg">
           Join Now
         </button></Link>
+        </div>
 
       </div>
     </nav>

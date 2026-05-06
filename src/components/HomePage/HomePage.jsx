@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -9,17 +9,10 @@ import { useGetVenueQuery } from '@/redux/Api/venueApi';
 import { Input } from 'antd';
 import {
   Autocomplete,
-  GoogleMap,
-  Marker,
   useJsApiLoader,
 } from '@react-google-maps/api';
 import GuestLoginEffect from "./GuestLoginEffect";
 import { PageLoader } from "../Loading";
-
-const containerStyle = {
-  width: '100%',
-  height: '300px',
-};
 
 const HomePage = () => {
   const [locationValue, setLocationValue] = useState("");
@@ -31,54 +24,73 @@ const HomePage = () => {
   const [lng, setLng] = useState();
   const [maxDistance, setMaxDistance] = useState(5);
 
-  const [position, setPosition] = useState(null);
   const [autocomplete, setAutocomplete] = useState(null);
-  const [map, setMap] = useState(null);
-
-  // 🔥 all venues for infinite scroll
   const [allVenues, setAllVenues] = useState([]);
 
-const { data: venue, isLoading } = useGetVenueQuery(
-  {
-    searchTerm,
-    page: currentPage,
-    limit: pageSize,
-    lat,
-    lng,
-    maxDistance,
-  },
-  {
-    skip: !lat || !lng, // ✅ important
-  }
-);
-  console.log(venue)
+  // ✅ Current location আলাদা রাখো — fallback এর জন্য
+  const currentLocationRef = useRef({ lat: null, lng: null, address: "" });
+
+  const { data: venue, isLoading } = useGetVenueQuery(
+    { searchTerm, page: currentPage, limit: pageSize, lat, lng, maxDistance },
+    { skip: !lat || !lng }
+  );
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
-useEffect(() => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const currentLat = pos.coords.latitude;
-        const currentLng = pos.coords.longitude;
 
-        setLat(currentLat);
-        setLng(currentLng);
-        setPosition({ lat: currentLat, lng: currentLng });
-
-        // reset for fresh load
-        setCurrentPage(1);
-        setAllVenues([]);
-      },
-      (err) => {
-        console.error("Location permission denied", err);
+  // ✅ Reverse geocoding — lat/lng থেকে address বের করো
+  const reverseGeocode = (latitude, longitude) => {
+    if (!window.google) return;
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode(
+      { location: { lat: latitude, lng: longitude } },
+      (results, status) => {
+        if (status === "OK" && results[0]) {
+          const address = results[0].formatted_address;
+          setLocationValue(address);
+          currentLocationRef.current.address = address;
+        }
       }
     );
-  }
-}, []);
-  // ✅ merge data
+  };
+
+  // ✅ Geolocation — current position নাও এবং field এ দেখাও
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const currentLat = pos.coords.latitude;
+          const currentLng = pos.coords.longitude;
+
+          setLat(currentLat);
+          setLng(currentLng);
+          setCurrentPage(1);
+          setAllVenues([]);
+
+          currentLocationRef.current.lat = currentLat;
+          currentLocationRef.current.lng = currentLng;
+
+          // ✅ Google Maps load হলে address দেখাও
+          if (window.google) {
+            reverseGeocode(currentLat, currentLng);
+          } else {
+            // Google Maps load হওয়ার আগে হলে wait করো
+            const interval = setInterval(() => {
+              if (window.google) {
+                clearInterval(interval);
+                reverseGeocode(currentLat, currentLng);
+              }
+            }, 300);
+          }
+        },
+        (err) => console.error("Location permission denied", err)
+      );
+    }
+  }, []);
+
+  // ✅ venue data merge
   useEffect(() => {
     if (venue?.data?.result) {
       if (currentPage === 1) {
@@ -102,38 +114,43 @@ useEffect(() => {
         }
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [currentPage, venue, isLoading]);
 
-  // ✅ location select
-const handlePlaceChanged = () => {
-  if (autocomplete) {
-    const place = autocomplete.getPlace();
-    if (place?.geometry) {
-      const newLat = place.geometry.location.lat();
-      const newLng = place.geometry.location.lng();
+  // ✅ Autocomplete থেকে নতুন location select
+  const handlePlaceChanged = () => {
+    if (autocomplete) {
+      const place = autocomplete.getPlace();
+      if (place?.geometry) {
+        const newLat = place.geometry.location.lat();
+        const newLng = place.geometry.location.lng();
 
-      setLat(newLat);
-      setLng(newLng);
-      setPosition({ lat: newLat, lng: newLng });
+        setLat(newLat);
+        setLng(newLng);
+        setCurrentPage(1);
+        setAllVenues([]);
+        setLocationValue(place.formatted_address);
+      }
+    }
+  };
 
+  // ✅ Location field empty হলে current location এ ফিরে যাও
+  const handleLocationBlur = () => {
+    if (!locationValue.trim() && currentLocationRef.current.lat) {
+      setLat(currentLocationRef.current.lat);
+      setLng(currentLocationRef.current.lng);
+      setLocationValue(currentLocationRef.current.address);
       setCurrentPage(1);
       setAllVenues([]);
-
-      map?.panTo({ lat: newLat, lng: newLng });
-      setLocationValue(place.formatted_address);
     }
-  }
-};
+  };
 
-  // ✅ search reset
-const handleSearch = (value) => {
-  setSearchTerm(value);
-  setCurrentPage(1);
-  setAllVenues([]);
-};
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+    setAllVenues([]);
+  };
 
   return (
     <div className="space-y-4 mt-20 p-3">
@@ -158,37 +175,24 @@ const handleSearch = (value) => {
               className="custom-input"
               value={locationValue}
               onChange={(e) => setLocationValue(e.target.value)}
+              onBlur={handleLocationBlur} // ✅ empty হলে current location ফিরে আসবে
             />
           </Autocomplete>
         )}
 
-      <Input
-  type="number"
-  placeholder="Max Distance (km)"
-  className="custom-input"
-  value={maxDistance}
-  disabled={!lat || !lng} // ✅ disable
-  onChange={(e) => {
-    setMaxDistance(Number(e.target.value));
-    setCurrentPage(1);
-    setAllVenues([]);
-  }}
-/>
+        <Input
+          type="number"
+          placeholder="Max Distance (km)"
+          className="custom-input"
+          value={maxDistance}
+          disabled={!lat || !lng}
+          onChange={(e) => {
+            setMaxDistance(Number(e.target.value));
+            setCurrentPage(1);
+            setAllVenues([]);
+          }}
+        />
       </div>
-
-      {/* 🗺️ Map */}
-      {isLoaded && position && (
-        <div className="mt-4">
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={position}
-            zoom={14}
-            onLoad={(map) => setMap(map)}
-          >
-            <Marker position={position} />
-          </GoogleMap>
-        </div>
-      )}
 
       {/* 📦 Venue List */}
       {allVenues.map((item) => (
@@ -207,20 +211,12 @@ const handleSearch = (value) => {
                   className="w-[70px] h-[70px] object-cover rounded-2xl"
                 />
                 <div className="space-y-2">
-                  <h2 className="text-[17px] text-white font-semibold">
-                    {item.name}
-                  </h2>
-
-                  <span
-                    className={`py-[4px] px-[12px] rounded-full text-sm ${
-                      item.isOpen
-                        ? "text-[#22C55E] bg-[#22C55E33]"
-                        : "text-[#EF4444] bg-[#EF444433]"
-                    }`}
-                  >
+                  <h2 className="text-[17px] text-white font-semibold">{item.name}</h2>
+                  <span className={`py-[4px] px-[12px] rounded-full text-sm ${
+                    item.isOpen ? "text-[#22C55E] bg-[#22C55E33]" : "text-[#EF4444] bg-[#EF444433]"
+                  }`}>
                     {item.isOpen ? "• Open" : "• Closed"}
                   </span>
-
                   <p className="text-gray-400 text-[12px] flex gap-1 items-center">
                     <LocationIco /> {item.address}
                   </p>
@@ -232,10 +228,7 @@ const handleSearch = (value) => {
         </div>
       ))}
 
-      {/* ⏳ Loading */}
-      {isLoading && (
-        <PageLoader></PageLoader>
-      )}
+      {isLoading && <PageLoader />}
     </div>
   );
 };

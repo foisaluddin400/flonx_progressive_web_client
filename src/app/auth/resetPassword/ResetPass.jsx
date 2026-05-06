@@ -1,6 +1,7 @@
-'use client'
-import React, { useState } from "react";
-import { Form, Input, Spin, Button } from "antd";
+'use client';
+
+import React, { useState, useEffect } from "react";
+import { Form, Input, Spin } from "antd";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useResetPasswordMutation } from "@/redux/Api/userApi";
@@ -14,10 +15,19 @@ const ResetPass = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-const venueId = localStorage.getItem("venueId");
-  const onFinish = async (values) => {
-    const email = localStorage.getItem("resetEmail");
 
+  // ✅ FIX: localStorage safe access
+  const [venueId, setVenueId] = useState(null);
+  const [email, setEmail] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setVenueId(localStorage.getItem("venueId"));
+      setEmail(localStorage.getItem("resetEmail"));
+    }
+  }, []);
+
+  const onFinish = async (values) => {
     if (!email) {
       toast.error("Email not found!");
       return;
@@ -32,8 +42,8 @@ const venueId = localStorage.getItem("venueId");
 
       toast.success(response?.message || "Password reset successful!");
 
-      // ✅ redirect after success
-      router.push(`/auth/login/${venueId}`);
+      // ✅ safe redirect
+      router.push(venueId ? `/auth/login/${venueId}` : "/auth/login");
 
     } catch (error) {
       toast.error(error?.data?.message || "Failed to reset password.");
@@ -44,20 +54,24 @@ const venueId = localStorage.getItem("venueId");
     <div className="flex font-nunito justify-center items-center min-h-screen px-4 lg:px-0">
       <div className="w-full max-w-lg p-6 lg:p-8 rounded-lg bg-[#822CE71A]">
 
+        {/* Title */}
         <h2 className="text-2xl font-semibold mb-2">
           Set a New Password
         </h2>
+
         <p className="mb-6 text-sm text-gray-400">
           Secure your account by creating a new password.
         </p>
 
+        {/* Form */}
         <Form form={form} layout="vertical" onFinish={onFinish}>
-<label className="text-gray-400 block mb-1">
-              New Password
-            </label>
+
           {/* Password */}
+          <label className="text-gray-400 block mb-1">
+            New Password
+          </label>
+
           <Form.Item
-          
             name="password"
             rules={[
               { required: true, message: "Enter your password!" },
@@ -69,18 +83,22 @@ const venueId = localStorage.getItem("venueId");
               type={showPassword ? "text" : "password"}
               placeholder="Enter new password"
               suffix={
-                <span onClick={() => setShowPassword(!showPassword)}>
+                <span
+                  className="cursor-pointer text-gray-400"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               }
             />
           </Form.Item>
-<label className="text-gray-400 block mb-1">
-             Confirm Password
-            </label>
+
           {/* Confirm Password */}
+          <label className="text-gray-400 block mb-1">
+            Confirm Password
+          </label>
+
           <Form.Item
-    
             name="confirmPassword"
             dependencies={["password"]}
             rules={[
@@ -90,7 +108,9 @@ const venueId = localStorage.getItem("venueId");
                   if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error("Passwords do not match!"));
+                  return Promise.reject(
+                    new Error("Passwords do not match!")
+                  );
                 },
               }),
             ]}
@@ -100,7 +120,12 @@ const venueId = localStorage.getItem("venueId");
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm password"
               suffix={
-                <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                <span
+                  className="cursor-pointer text-gray-400"
+                  onClick={() =>
+                    setShowConfirmPassword(!showConfirmPassword)
+                  }
+                >
                   {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               }
@@ -110,10 +135,9 @@ const venueId = localStorage.getItem("venueId");
           {/* Submit */}
           <Form.Item>
             <button
-              htmlType="submit"
-              block
+              type="submit" // ✅ FIXED
               disabled={isLoading}
-              className="h-12 w-full text-white rounded-full bg-gradient-to-tr from-[#822CE7] to-[#BB82FF]"
+              className="w-full h-12 text-white rounded-full bg-gradient-to-tr from-[#822CE7] to-[#BB82FF]"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center gap-2">

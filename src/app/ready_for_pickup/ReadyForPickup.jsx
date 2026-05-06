@@ -10,6 +10,7 @@ import { PageLoader } from "@/components/Loading";
 
 const ReadyForPickup = () => {
   const { id } = useParams();
+  console.log(id)
   const router = useRouter();
 
   const { data: singleOrder, isLoading } = useGetSingleOrderQuery({ id });

@@ -11,8 +11,8 @@ import { useState } from "react";
 const MyOrder = () => {
   const [status, setStatus] = useState("CURRENT_ORDER");
 
-  const { data: myOrder, isLoading, isFetching } = useGetMyOrderQuery({ status }); // ✅ isFetching যোগ
-
+  const { data: myOrder, isLoading, isFetching } = useGetMyOrderQuery({ status }); 
+console.log(myOrder)
   if (isLoading) return <PageLoader />;
 
   return (
@@ -49,7 +49,7 @@ const MyOrder = () => {
         </button>
       </div>
 
-      {/* ✅ Status change হলে এই অংশে PageLoader দেখাবে */}
+ 
       {isFetching ? (
         <PageLoader />
       ) : (

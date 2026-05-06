@@ -9,8 +9,10 @@ import { PageLoader } from "@/components/Loading";
 
 const SingleOrder = () => {
   const { id } = useParams();
-
+console.log(id)
   const { data: singleOrder, isLoading } = useGetSingleOrderQuery({ id });
+  console.log(singleOrder)
+  
 
   if (isLoading) return <PageLoader></PageLoader>;
 

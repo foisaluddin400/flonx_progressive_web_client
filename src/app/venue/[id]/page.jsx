@@ -158,7 +158,7 @@ useEffect(() => {
           <PageLoader></PageLoader>
        
       ) : (
-        <div className="flex gap-3 mt-6 overflow-x-auto">
+        <div className="flex gap-3 mt-6 overflow-x-auto whitespace-nowrap">
           <button
             onClick={() => setCategory("")}
             className={`px-5 py-2 rounded-full ${

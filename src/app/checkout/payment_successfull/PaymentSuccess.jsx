@@ -12,6 +12,7 @@ export default function PaymentSuccess() {
   const paymentIntent = searchParams.get("payment_intent");
 
   const isSuccess = status === "succeeded";
+  console.log(isSuccess)
 
   return (
     <div className="h-screen bg-white rounded-lg shadow-lg p-6">

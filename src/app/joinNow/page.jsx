@@ -73,7 +73,7 @@ const JoinNow = () => {
             </h1>
           </ul>
 
-          <Link href="">
+          <Link href="https://flonx-bartender-flow-client.vercel.app/joinAs">
           <button className="mt-8 w-full py-3 rounded-full bg-gradient-to-r from-[#822CE7] to-[#BB82FF] font-semibold shadow-lg hover:scale-[1.02] active:scale-95 transition">
             Join as Bartender
           </button></Link>

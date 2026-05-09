@@ -47,12 +47,13 @@ const Page = () => {
       setLoadingType("mark");
       const res = await markUnavail(id).unwrap();
       toast.success(res?.message || "Marked as unavailable");
-      refetch();
+      await refetch();
     } catch (err) {
       toast.error(err?.data?.message || "Failed to mark as unavailable");
       console.error(err);
     } finally {
       setLoadingId(null);
+      setLoadingType("");
     }
   };
 
@@ -61,11 +62,12 @@ const Page = () => {
       setLoadingId(id);
       setLoadingType(type);
       await updateStatus({ id, data: { status } }).unwrap();
-      refetch();
+      await refetch();
     } catch (err) {
       console.error(err);
     } finally {
       setLoadingId(null);
+      setLoadingType("");
     }
   };
 
@@ -85,11 +87,19 @@ const Page = () => {
   const handleEnd = async (orderId) => {
     const state = sliderState[orderId];
     if (!state) return;
+
+    setSliderState((prev) => ({
+      ...prev,
+      [orderId]: { ...prev[orderId], dragging: false },
+    }));
+
     const rect = sliderRef.current.getBoundingClientRect();
     const max = rect.width - 56;
+
     if (state.position >= max * 0.9) {
       await handleUpdateStatus(orderId, "READY_FOR_PIC", "ready");
     }
+
     setSliderState((prev) => ({
       ...prev,
       [orderId]: { dragging: false, position: 0 },
@@ -109,12 +119,17 @@ const Page = () => {
     }
   };
 
-  // ================= SHIFT LOADING =================
+  const getLoadingLabel = (type) => {
+    switch (type) {
+      case "mark": return "Marking unavailable...";
+      case "start": return "Starting order...";
+      case "ready": return "Confirming ready...";
+      default: return "Processing...";
+    }
+  };
 
   if (isShiftLoading) {
-    return (
-     <PageLoader></PageLoader>
-    );
+    return <PageLoader />;
   }
 
   return (
@@ -173,7 +188,7 @@ const Page = () => {
       {currentShift && (
         <>
           {/* TABS */}
-          <div className="flex gap-3 mb-6 overflow-x-auto px-1">
+          <div className="flex gap-3 mb-6 overflow-x-auto px-1 whitespace-nowrap">
             {[
               { label: "Queued", value: "QUEUED" },
               { label: "In Progress", value: "IN_PROGRESS" },
@@ -197,136 +212,141 @@ const Page = () => {
 
           {/* ORDER LOADING */}
           {isOrderLoading ? (
-            <PageLoader></PageLoader>
+            <PageLoader />
           ) : (
             <>
-              {/* EMPTY */}
-              {orders.length === 0 && (
-                <NoData></NoData>
-              )}
+              {orders.length === 0 && <NoData />}
 
-              {/* ORDERS */}
-              {orders.map((order) => (
-                <div
-                  key={order._id}
-                  className={`${getBgColor(order.status)} text-white rounded-2xl p-4 mb-5`}
-                >
-                  {/* HEADER */}
-                  <div className="flex justify-between mb-3">
-                    <div>
-                      <p className="text-sm opacity-80">Order Code</p>
-                      <h3 className="text-xl font-bold">{order.orderCode}</h3>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm opacity-80">Placed At</p>
-                      <p>{new Date(order.createdAt).toLocaleTimeString()}</p>
-                    </div>
-                  </div>
+              {orders.map((order) => {
+              
+                const isThisLoading = loadingId === order._id;
 
-                  {/* ITEMS */}
-                  <div className="border-t border-white/40 pt-3 text-sm">
-                    {order.items.map((item, i) => (
-                      <div key={i} className="flex justify-between mb-2">
-                        <div>
-                          <p className="italic">{item.product.name}</p>
-                          <p className="opacity-80">Quantity: {item.quantity}</p>
-                        </div>
-                        <p>${item.price}</p>
-                      </div>
-                    ))}
-                  </div>
+                return (
+                  <div
+                    key={order._id}
+               
+                    className={`${getBgColor(order.status)} text-white rounded-2xl p-4 mb-5 relative overflow-hidden`}
+                  >
 
-                  {/* ACTIONS */}
-                  <div className="flex border-t border-white/40 pt-3 gap-3 mt-4 flex-col">
-
-                    {/* QUEUED */}
-                    {order.status === "QUEUED" && (
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => handleMarkUnavailable(order._id)}
-                          disabled={loadingId === order._id}
-                          className={`flex-1 py-2 rounded-full flex justify-center items-center gap-2 ${
-                            loadingId === order._id ? "bg-gray-300 text-black" : "bg-white text-black"
-                          }`}
-                        >
-                          {loadingId === order._id && loadingType === "mark" ? (
-                            <><Spin size="small" /><span>Processing...</span></>
-                          ) : (
-                            "Mark Unavailable"
-                          )}
-                        </button>
-
-                        <button
-                          onClick={() => handleUpdateStatus(order._id, "IN_PROGRESS", "start")}
-                          disabled={loadingId === order._id}
-                          className={`flex-1 py-2 rounded-full flex justify-center items-center gap-2 ${
-                            loadingId === order._id ? "bg-gray-300 text-black" : "bg-white text-black"
-                          }`}
-                        >
-                          {loadingId === order._id && loadingType === "start" ? (
-                            <><Spin size="small" /><span>Starting...</span></>
-                          ) : (
-                            "Start Making"
-                          )}
-                        </button>
+                  
+                    {isThisLoading && (
+                      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 rounded-2xl backdrop-blur-sm bg-black/40">
+                        <Spin size="large" />
+                        <p className="text-white font-medium text-sm">
+                          {getLoadingLabel(loadingType)}
+                        </p>
                       </div>
                     )}
 
-                    {/* IN_PROGRESS */}
-                    {order.status === "IN_PROGRESS" && (
-                      <div
-                        ref={sliderRef}
-                        className="relative bg-[#D9D9D9] h-14 rounded-full flex items-center px-2 overflow-hidden"
-                      >
-                        <span className="absolute inset-0 flex items-center justify-center text-gray-700 font-medium">
-                          Slide to confirm
-                        </span>
+                    {/* HEADER */}
+                    <div className="flex justify-between mb-3">
+                      <div>
+                        <p className="text-sm opacity-80">Order Code</p>
+                        <h3 className="text-xl font-bold">{order.orderCode}</h3>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm opacity-80">Placed At</p>
+                        <p>{new Date(order.createdAt).toLocaleTimeString()}</p>
+                      </div>
+                    </div>
+
+                    {/* ITEMS */}
+                    <div className="border-t border-white/40 pt-3 text-sm">
+                      {order.items.map((item, i) => (
+                        <div key={i} className="flex justify-between mb-2">
+                          <div>
+                            <p className="italic">{item.product.name}</p>
+                            <p className="opacity-80">Quantity: {item.quantity}</p>
+                          </div>
+                          <p>${item.price}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* ACTIONS */}
+                    <div className="flex border-t border-white/40 pt-3 gap-3 mt-4 flex-col">
+
+                      {/* QUEUED */}
+                      {order.status === "QUEUED" && (
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => handleMarkUnavailable(order._id)}
+                            disabled={isThisLoading}
+                            className="flex-1 py-2 rounded-full flex justify-center items-center gap-2 bg-white text-black"
+                          >
+                            Mark Unavailable
+                          </button>
+
+                          <button
+                            onClick={() => handleUpdateStatus(order._id, "IN_PROGRESS", "start")}
+                            disabled={isThisLoading}
+                            className="flex-1 py-2 rounded-full flex justify-center items-center gap-2 bg-white text-black"
+                          >
+                            Start Making
+                          </button>
+                        </div>
+                      )}
+
+                      {/* IN_PROGRESS — Slider */}
+                      {order.status === "IN_PROGRESS" && (
                         <div
-                          onMouseDown={() =>
-                            setSliderState((prev) => ({
-                              ...prev,
-                              [order._id]: { ...prev[order._id], dragging: true },
-                            }))
-                          }
-                          onMouseUp={() => handleEnd(order._id)}
-                          onMouseLeave={() => handleEnd(order._id)}
-                          onMouseMove={(e) => handleMove(e.clientX, order._id)}
-                          onTouchStart={() =>
-                            setSliderState((prev) => ({
-                              ...prev,
-                              [order._id]: { ...prev[order._id], dragging: true },
-                            }))
-                          }
-                          onTouchEnd={() => handleEnd(order._id)}
-                          onTouchMove={(e) => handleMove(e.touches[0].clientX, order._id)}
-                          style={{
-                            left: sliderState[order._id]?.position || 0,
-                            transition: sliderState[order._id]?.dragging ? "none" : "all 0.3s ease",
-                          }}
-                          className="absolute w-14 h-14 bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full flex items-center justify-center text-white cursor-pointer"
+                          ref={sliderRef}
+                          className="relative bg-[#D9D9D9] h-14 rounded-full flex items-center px-2 overflow-hidden"
                         >
-                          Slide
+                          <span className="absolute inset-0 flex items-center justify-center text-gray-700 font-medium">
+                            Slide to confirm
+                          </span>
+
+                          <div
+                            onMouseDown={() => {
+                              if (isThisLoading) return;
+                              setSliderState((prev) => ({
+                                ...prev,
+                                [order._id]: { ...prev[order._id], dragging: true },
+                              }));
+                            }}
+                            onMouseUp={() => handleEnd(order._id)}
+                            onMouseLeave={() => handleEnd(order._id)}
+                            onMouseMove={(e) => handleMove(e.clientX, order._id)}
+                            onTouchStart={() => {
+                              if (isThisLoading) return;
+                              setSliderState((prev) => ({
+                                ...prev,
+                                [order._id]: { ...prev[order._id], dragging: true },
+                              }));
+                            }}
+                            onTouchEnd={() => handleEnd(order._id)}
+                            onTouchMove={(e) => handleMove(e.touches[0].clientX, order._id)}
+                            style={{
+                              left: sliderState[order._id]?.position || 0,
+                              transition: sliderState[order._id]?.dragging ? "none" : "all 0.3s ease",
+                              pointerEvents: isThisLoading ? "none" : "auto",
+                            }}
+                            className="absolute w-14 h-14 bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full flex items-center justify-center text-white cursor-pointer"
+                          >
+                            Slide
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {/* READY */}
-                    {order.status === "READY_FOR_PIC" && (
-                      <button className="w-full bg-white text-black py-2 rounded-full">
-                        Waiting for pickup
-                      </button>
-                    )}
+                      {/* READY */}
+                      {order.status === "READY_FOR_PIC" && (
+                        <button className="w-full bg-white text-black py-2 rounded-full">
+                          Waiting for pickup
+                        </button>
+                      )}
 
-                    {/* PICKED */}
-                    {order.status === "PICKED" && (
-                      <button className="w-full border py-2 rounded-full">
-                        Completed
-                      </button>
-                    )}
+                      {/* PICKED */}
+                      {order.status === "PICKED" && (
+                        <button className="w-full border py-2 rounded-full">
+                          Completed
+                        </button>
+                      )}
 
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </>
           )}
         </>

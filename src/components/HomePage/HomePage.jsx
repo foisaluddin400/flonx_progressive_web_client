@@ -27,7 +27,7 @@ const HomePage = () => {
   const [autocomplete, setAutocomplete] = useState(null);
   const [allVenues, setAllVenues] = useState([]);
 
-  // ✅ Current location আলাদা রাখো — fallback এর জন্য
+
   const currentLocationRef = useRef({ lat: null, lng: null, address: "" });
 
   const { data: venue, isLoading } = useGetVenueQuery(
@@ -56,7 +56,6 @@ const HomePage = () => {
     );
   };
 
-  // ✅ Geolocation — current position নাও এবং field এ দেখাও
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -76,7 +75,7 @@ const HomePage = () => {
           if (window.google) {
             reverseGeocode(currentLat, currentLng);
           } else {
-            // Google Maps load হওয়ার আগে হলে wait করো
+         
             const interval = setInterval(() => {
               if (window.google) {
                 clearInterval(interval);
@@ -118,7 +117,6 @@ const HomePage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [currentPage, venue, isLoading]);
 
-  // ✅ Autocomplete থেকে নতুন location select
   const handlePlaceChanged = () => {
     if (autocomplete) {
       const place = autocomplete.getPlace();
@@ -135,7 +133,7 @@ const HomePage = () => {
     }
   };
 
-  // ✅ Location field empty হলে current location এ ফিরে যাও
+
   const handleLocationBlur = () => {
     if (!locationValue.trim() && currentLocationRef.current.lat) {
       setLat(currentLocationRef.current.lat);
@@ -175,7 +173,7 @@ const HomePage = () => {
               className="custom-input"
               value={locationValue}
               onChange={(e) => setLocationValue(e.target.value)}
-              onBlur={handleLocationBlur} // ✅ empty হলে current location ফিরে আসবে
+              onBlur={handleLocationBlur} 
             />
           </Autocomplete>
         )}

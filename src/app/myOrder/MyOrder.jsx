@@ -1,5 +1,6 @@
 "use client";
 
+import LeftArray from "@/components/icon/LeftArray";
 import { PageLoader } from "@/components/Loading";
 import NoData from "@/components/NoData";
 import Navigate from "@/components/shared/Navigate";
@@ -11,15 +12,21 @@ import { useState } from "react";
 const MyOrder = () => {
   const [status, setStatus] = useState("CURRENT_ORDER");
 
-  const { data: myOrder, isLoading, isFetching } = useGetMyOrderQuery({ status }); 
-console.log(myOrder)
+  const {
+    data: myOrder,
+    isLoading,
+    isFetching,
+  } = useGetMyOrderQuery({ status });
+  console.log(myOrder);
   if (isLoading) return <PageLoader />;
 
   return (
     <div className="px-3">
       {/* Header */}
       <div className="flex items-center justify-between relative pt-6 pb-6">
-        <Navigate />
+       <Link href={'/'}> <button className=" w-10 h-10  rounded-full border border-purple-400/30 flex items-center justify-center bg-white/5 backdrop-blur-md">
+          <LeftArray></LeftArray>
+        </button></Link>
         <h1 className="text-[16px] italic">My Order</h1>
         <div></div>
       </div>
@@ -49,7 +56,6 @@ console.log(myOrder)
         </button>
       </div>
 
- 
       {isFetching ? (
         <PageLoader />
       ) : (
@@ -64,12 +70,7 @@ console.log(myOrder)
                     ? `/past_order_details/${order?._id}`
                     : `/myOrder/${order?._id}`;
 
-              const statusStyle =
-                order.status === "QUEUED"
-                  ? "bg-yellow-500/20 text-yellow-400"
-                  : order.status === "READY_FOR_PIC"
-                    ? "bg-orange-500/20 text-orange-400"
-                    : "bg-green-500/20 text-green-400";
+             const color = order?.colorCode || "#F97316";
 
               return (
                 <div
@@ -87,9 +88,15 @@ console.log(myOrder)
                           {new Date(order.createdAt).toLocaleString()}
                         </p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-sm ${statusStyle}`}>
-                        • {order.status}
-                      </span>
+                     <span
+  className="px-3 py-1 rounded-full text-sm"
+  style={{
+    backgroundColor: `${color}1A`,
+    color: color,
+  }}
+>
+  • {order.status}
+</span>
                     </div>
 
                     {/* Products */}
@@ -123,7 +130,9 @@ console.log(myOrder)
                       <p className="text-gray-400 text-sm">
                         Total Items: {order.totalQuantity}
                       </p>
-                      <p className="text-white font-bold">${order.totalPrice}</p>
+                      <p className="text-white font-bold">
+                        ${order.totalPrice}
+                      </p>
                     </div>
                   </Link>
                 </div>

@@ -1,5 +1,6 @@
 'use client'
 import CompleteOrderIco from "@/components/icon/CompleteOrderIco";
+import LeftArray from "@/components/icon/LeftArray";
 import Navigate from "@/components/shared/Navigate";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -10,7 +11,9 @@ const CompleteOrder = () => {
   return (
     <div className="px-3">
       <div className="flex items-center justify-between relative pt-6 pb-6">
-        <Navigate />
+        <Link href={'/myOrder'}> <button className=" w-10 h-10  rounded-full border border-purple-400/30 flex items-center justify-center bg-white/5 backdrop-blur-md">
+          <LeftArray></LeftArray>
+        </button></Link>
         <h1 className="text-[16px] italic">My Order</h1>
         <div></div>
       </div>

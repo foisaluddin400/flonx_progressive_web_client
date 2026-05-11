@@ -17,7 +17,7 @@ console.log(id)
   if (isLoading) return <PageLoader></PageLoader>;
 
   const order = singleOrder?.data;
-
+const orderColor = order?.colorCode || "#F97316";
   // 🎯 Status Config
   const statusConfig = {
     QUEUED: {
@@ -52,45 +52,42 @@ console.log(id)
       {/* Order Info */}
       <div>
         {/* Order Code */}
-        <div
-          className="p-11 rounded-3xl text-center"
-          style={{
-            backgroundColor: currentStatus.textColor,
-          }}
-        >
+      <div
+  className="p-11 rounded-3xl text-center"
+  style={{
+    backgroundColor: `${orderColor}1A`,
+  }}
+>
           <h1 className="text-4xl font-bold">{order?.orderCode || "----"}</h1>
-          <p className="text-2xl">Order Code</p>
-        </div>
+  <p className="text-2xl">Order Code</p>
+</div>
 
         {/* Status Box */}
-        <div
-          className="mt-6 flex gap-2 items-center p-3 rounded-xl"
-          style={{
-            backgroundColor: currentStatus.bg,
-            border: `1px solid ${currentStatus.border}`,
-          }}
-        >
-          <div
-            className="flex justify-center items-center w-[50px] h-[50px] rounded-xl"
-            style={{ border: `1px solid ${currentStatus.border}` }}
-          >
-            {currentStatus.icon}
-          </div>
+     <div
+  className="mt-6 flex gap-2 items-center p-3 rounded-xl"
+  style={{
+    backgroundColor: `${orderColor}1A`,
+    border: `1px solid ${orderColor}`,
+  }}
+>
+  <div
+    className="flex justify-center items-center w-[50px] h-[50px] rounded-xl"
+    style={{ border: `1px solid ${orderColor}` }}
+  >
+    {currentStatus.icon}
+  </div>
 
-          <div>
-            <h1
-              className="font-semibold"
-              style={{ color: currentStatus.textColor }}
-            >
-              {currentStatus.text}
-            </h1>
-            <p className="text-[#8C88A3]">{currentStatus.subText}</p>
-          </div>
-        </div>
+  <div>
+    <h1 className="font-semibold" style={{ color: orderColor }}>
+      {currentStatus.text}
+    </h1>
+    <p className="text-[#8C88A3]">{currentStatus.subText}</p>
+  </div>
+</div>
 
         {/* Bottom Text */}
         <p className="text-center pt-2 text-[#C9C6D6]">
-          We'll update you when your order is ready
+          We&rsquo;ll update you when your order is ready
         </p>
       </div>
     </div>

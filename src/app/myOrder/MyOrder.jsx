@@ -24,9 +24,12 @@ const MyOrder = () => {
     <div className="px-3">
       {/* Header */}
       <div className="flex items-center justify-between relative pt-6 pb-6">
-       <Link href={'/'}> <button className=" w-10 h-10  rounded-full border border-purple-400/30 flex items-center justify-center bg-white/5 backdrop-blur-md">
-          <LeftArray></LeftArray>
-        </button></Link>
+        <Link href={"/"}>
+          {" "}
+          <button className=" w-10 h-10  rounded-full border border-purple-400/30 flex items-center justify-center bg-white/5 backdrop-blur-md">
+            <LeftArray></LeftArray>
+          </button>
+        </Link>
         <h1 className="text-[16px] italic">My Order</h1>
         <div></div>
       </div>
@@ -70,7 +73,7 @@ const MyOrder = () => {
                     ? `/past_order_details/${order?._id}`
                     : `/myOrder/${order?._id}`;
 
-             const color = order?.colorCode || "#F97316";
+              const color = order?.colorCode || "#F97316";
 
               return (
                 <div
@@ -88,15 +91,15 @@ const MyOrder = () => {
                           {new Date(order.createdAt).toLocaleString()}
                         </p>
                       </div>
-                     <span
-  className="px-3 py-1 rounded-full text-sm"
-  style={{
-    backgroundColor: `${color}1A`,
-    color: color,
-  }}
->
-  • {order.status}
-</span>
+                      <span
+                        className="px-3 py-1 rounded-full text-sm"
+                        style={{
+                          backgroundColor: `${color}1A`,
+                          color: color,
+                        }}
+                      >
+                        • {order.status}
+                      </span>
                     </div>
 
                     {/* Products */}

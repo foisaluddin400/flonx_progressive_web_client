@@ -2,97 +2,81 @@ import { baseApi } from "./baseApi";
 
 const stripeApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    // =========================
+    // ORDER CREATE
+    // =========================
     createOrder: builder.mutation({
-      query: (data) => {
-        return {
-          url: "/order/create-order",
-          method: "POST",
-          body: data,
-        };
-      },
-      invalidatesTags: ["venue"],
+      query: (data) => ({
+        url: "/order/create-order",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Orders"],
     }),
 
+  
     getMyOrder: builder.query({
-      query: ({ status }) => {
-        return {
-          url: `/order/get-my-orders?status=${status}`,
-          method: "GET",
-        };
-      },
-      providesTags: ["venue"],
+      query: ({ status }) => ({
+        url: `/order/get-my-orders?status=${status}`,
+        method: "GET",
+      }),
+      providesTags: ["Orders"],
     }),
 
-    getCustomerSavePayment: builder.query({
-      query: () => {
-        return {
-          url: `/customer/payment-methods`,
-          method: "GET",
-        };
-      },
-      providesTags: ["venue"],
-    }),
-
-    getCustomerSavePayment: builder.query({
-      query: () => {
-        return {
-          url: `/customer/payment-methods`,
-          method: "GET",
-        };
-      },
-      providesTags: ["venue"],
-    }),
-
-    markUnavailable: builder.mutation({
-      query: (id) => {
-        return {
-          url: `/order/mark-as-unavailable/${id}`,
-          method: "PATCH",
-        };
-      },
-      invalidatesTags: ["venue"],
-    }),
-    updateStatus: builder.mutation({
-      query: ({ id, data }) => {
-        return {
-          url: `/order/update-status/${id}`,
-          method: "PATCH",
-          body: data,
-        };
-      },
-      invalidatesTags: ["venue"],
-    }),
-
+ 
     getSingleOrder: builder.query({
-      query: ({ id }) => {
-        return {
-          url: `/order/get-single-order/${id}`,
-          method: "GET",
-        };
-      },
-      providesTags: ["venue"],
+      query: ({ id }) => ({
+        url: `/order/get-single-order/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["SingleOrder"],
     }),
 
+   
     updateOrderStatus: builder.mutation({
-      query: ({ id, data }) => {
-        return {
-          url: `/order/update-status/${id}`,
-          method: "PATCH",
-          body: data,
-        };
-      },
-      invalidatesTags: ["venue"],
+      query: ({ id, data }) => ({
+        url: `/order/update-status/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Orders", "SingleOrder"],
     }),
+
+    updateStatus: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/order/update-status/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Orders", "SingleOrder"],
+    }),
+
+   
+    markUnavailable: builder.mutation({
+      query: (id) => ({
+        url: `/order/mark-as-unavailable/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Orders"],
+    }),
+
 
     createTipToBartender: builder.mutation({
-      query: ({ id, data }) => {
-        return {
-          url: `/order/tip-to-bartender/${id}`,
-          method: "POST",
-          body: data,
-        };
-      },
-      invalidatesTags: ["venue"],
+      query: ({ id, data }) => ({
+        url: `/order/tip-to-bartender/${id}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Orders", "SingleOrder"],
+    }),
+
+ 
+    getCustomerSavePayment: builder.query({
+      query: () => ({
+        url: `/customer/payment-methods`,
+        method: "GET",
+      }),
+      providesTags: ["Payment"],
     }),
   }),
 });
@@ -102,8 +86,8 @@ export const {
   useGetMyOrderQuery,
   useGetSingleOrderQuery,
   useUpdateOrderStatusMutation,
+  useUpdateStatusMutation,
   useCreateTipToBartenderMutation,
   useMarkUnavailableMutation,
-  useUpdateStatusMutation,
   useGetCustomerSavePaymentQuery,
 } = stripeApi;

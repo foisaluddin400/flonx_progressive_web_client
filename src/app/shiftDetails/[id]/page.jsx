@@ -23,7 +23,7 @@ const Page = () => {
   const [loadingId, setLoadingId] = useState(null);
   const [loadingType, setLoadingType] = useState("");
   const { data: currentShiftData, isLoading: isShiftLoading } = useGetCurrentShiftQuery();
-
+console.log(currentShiftData)
   const currentShift = currentShiftData?.data?.currentShift;
   const shiftId = currentShift?._id;
 
@@ -33,7 +33,7 @@ const Page = () => {
     { status: activeTab, shift: shiftId },
     { skip: !shiftId },
   );
-
+console.log(myOrder)
   const [updateStatus] = useUpdateStatusMutation();
   const [markUnavail] = useMarkUnavailableMutation();
 
@@ -179,8 +179,10 @@ const Page = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-[#1A0E2E] p-5 rounded-2xl text-center text-gray-400">
-          No current shift → orders hidden
+        <div className="bg-[#1A0E2E] p-5 rounded-2xl text-center ">
+         <h1 className="text-lg font-semibold"> Your shift starts in {new Date(currentShiftData?.data?.upcomingShift?.startDateTime).toLocaleString()} - {new Date(currentShiftData?.data?.upcomingShift?.endDateTime).toLocaleString()} </h1>
+
+          <h1 className="text-gray-400 text-sm mt-2">You will be able to start managing orders once the shift begins.</h1>
         </div>
       )}
 

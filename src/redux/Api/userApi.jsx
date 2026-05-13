@@ -56,7 +56,7 @@ const useApi = baseApi.injectEndpoints({
     getProfile: builder.query({
       query: () => {
         return {
-          url: "/admin/profile",
+          url: "/user/user-profile",
           method: "GET",
         };
       },

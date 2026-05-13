@@ -16,9 +16,13 @@ import { Spin } from "antd";
 import { toast } from "react-toastify";
 import { PageLoader } from "@/components/Loading";
 import NoData from "@/components/NoData";
+import { useGetProfileQuery } from "@/redux/Api/userApi";
 
 const Page = () => {
   const sliderRef = useRef(null);
+  
+  const {data: myProfile} = useGetProfileQuery()
+  console.log(myProfile)
   const [sliderState, setSliderState] = useState({});
   const [loadingId, setLoadingId] = useState(null);
   const [loadingType, setLoadingType] = useState("");
@@ -151,40 +155,64 @@ console.log(myOrder)
       </div>
 
       {/* SHIFT CARD */}
-      {currentShift ? (
-        <div className="bg-gradient-to-r from-[#1A0E2E] to-[#241046] p-4 rounded-2xl mb-6 flex justify-between items-center">
-          <div className="flex gap-3">
-            <img
-              className="w-[70px] h-[70px] object-cover rounded-2xl"
-              src={currentShift?.venue?.logo}
-              alt=""
-            />
-            <div>
-              <h3 className="font-semibold text-[18px]">
-                {currentShift?.venue?.name}
-              </h3>
-              <p className="text-[#C9C6D6] text-[12px] flex gap-1 items-center">
-                <LocationIco /> {currentShift?.venue?.address}
-              </p>
-              <p className="text-[#C9C6D6] text-[12px] flex gap-1 items-center">
-                <DateIcon />
-                {new Date(currentShift?.startDateTime).toLocaleString()}
-              </p>
-            </div>
-          </div>
+   {currentShift ? (
+  <div className="bg-gradient-to-r from-[#1A0E2E] to-[#241046] p-4 rounded-2xl mb-6 flex justify-between items-center">
+    <div className="flex gap-3">
+      <img
+        className="w-[70px] h-[70px] object-cover rounded-2xl"
+        src={currentShift?.venue?.logo}
+        alt=""
+      />
 
-          <div className="text-right text-sm">
-            <p>Shift Rate</p>
-            <p className="font-semibold">${currentShift?.shiftRate}</p>
-          </div>
-        </div>
-      ) : (
-        <div className="bg-[#1A0E2E] p-5 rounded-2xl text-center ">
-         <h1 className="text-lg font-semibold"> Your shift starts in {new Date(currentShiftData?.data?.upcomingShift?.startDateTime).toLocaleString()} - {new Date(currentShiftData?.data?.upcomingShift?.endDateTime).toLocaleString()} </h1>
+      <div>
+        <h3 className="font-semibold text-[18px]">
+          {currentShift?.venue?.name}
+        </h3>
 
-          <h1 className="text-gray-400 text-sm mt-2">You will be able to start managing orders once the shift begins.</h1>
-        </div>
-      )}
+        <p className="text-[#C9C6D6] text-[12px] flex gap-1 items-center">
+          <LocationIco /> {currentShift?.venue?.address}
+        </p>
+
+        <p className="text-[#C9C6D6] text-[12px] flex gap-1 items-center">
+          <DateIcon />
+          {new Date(currentShift?.startDateTime).toLocaleString()}
+        </p>
+      </div>
+    </div>
+
+    <div className="text-right text-sm">
+      <p>Shift Rate</p>
+      <p className="font-semibold">${currentShift?.shiftRate}</p>
+    </div>
+  </div>
+) : currentShiftData?.data?.upcomingShift ? (
+  <div className="bg-[#1A0E2E] p-5 rounded-2xl text-center">
+    <h1 className="text-lg font-semibold">
+      Your shift starts in{" "}
+      {new Date(
+        currentShiftData?.data?.upcomingShift?.startDateTime
+      ).toLocaleString()}{" "}
+      -{" "}
+      {new Date(
+        currentShiftData?.data?.upcomingShift?.endDateTime
+      ).toLocaleString()}
+    </h1>
+
+    <h1 className="text-gray-400 text-sm mt-2">
+      You will be able to start managing orders once the shift begins.
+    </h1>
+  </div>
+) : (
+  <div className="bg-[#1A0E2E] p-5 rounded-2xl text-center">
+    <h1 className="text-lg font-semibold">
+      You have no running shift
+    </h1>
+
+    <h1 className="text-gray-400 text-sm mt-2">
+      No current or upcoming shifts found.
+    </h1>
+  </div>
+)}
 
       {/* ONLY IF SHIFT EXISTS */}
       {currentShift && (

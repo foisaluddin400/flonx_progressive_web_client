@@ -112,16 +112,7 @@ console.log(myOrder)
 
   // ================= UI HELPERS =================
 
-  const getBgColor = (status) => {
-    switch (status) {
-      case "QUEUED": return "bg-[#FFB020]";
-      case "IN_PROGRESS": return "bg-[#22C55E]";
-      case "READY_FOR_PIC": return "bg-[#822CE7]";
-      case "PICKED": return "bg-[#3D8BFF]";
-      case "CANCELLED": return "bg-[#EF4444]";
-      default: return "bg-gray-500";
-    }
-  };
+
 
   const getLoadingLabel = (type) => {
     switch (type) {
@@ -255,7 +246,8 @@ console.log(myOrder)
                   <div
                     key={order._id}
                
-                    className={`${getBgColor(order.status)} text-white rounded-2xl p-4 mb-5 relative overflow-hidden`}
+                   className="text-white rounded-2xl p-4 mb-5 relative overflow-hidden"
+style={{ backgroundColor: order?.colorCode}}
                   >
 
                   

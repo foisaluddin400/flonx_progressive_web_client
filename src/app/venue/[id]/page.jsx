@@ -28,6 +28,7 @@ export default function Venue() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [allVenues, setAllVenues] = useState([]);
+  console.log(allVenues)
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("");
 
@@ -112,12 +113,15 @@ useEffect(() => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <Image
-                src={getSingleVenue?.data?.logo || "/img/shopImage.png"}
+              
+                src={getSingleVenue?.data?.logo?.trim() ? getSingleVenue.data.logo : "/public/img/default.png"}
                 alt={getSingleVenue?.data?.name}
                 width={70}
                 height={70}
                 className="rounded-2xl"
               />
+
+            
               <div>
                 <h2 className="text-white font-semibold">
                   {getSingleVenue?.data?.name}
@@ -213,12 +217,12 @@ useEffect(() => {
                   className="flex gap-4 items-center"
                 >
                   <Image
-                    src={item.image || "/img/shopImage.png"}
-                    alt={item.name}
-                    width={60}
-                    height={60}
-                    className="rounded-xl"
-                  />
+  src={item.image?.trim() ? item.image : "/img/default.png"}
+  alt={item.name}
+  width={60}
+  height={60}
+  className="rounded-xl"
+/>
                   <div>
                     <h3>{item.name}</h3>
                     <p className="text-sm text-gray-400">

@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useGetSingleVenueQuery } from "@/redux/Api/venueApi";
 import LocationIco from "@/components/icon/LocationIco";
+import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 
 const Login = () => {
   const {id} = useParams();
@@ -170,7 +171,7 @@ const [login, { isLoading }] = useLoginAdminMutation();
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? <FaRegEye /> : <FaEyeSlash />}
               </button>
             </div>
           </div>

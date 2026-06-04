@@ -14,7 +14,7 @@ const ItemDetails = () => {
 
   const { data, isLoading } = useGetSingleProductQuery({ id });
   const product = data?.data;
-
+console.log(product)
   const [addToCart] = useAddToCartMutation();
   const [qty, setQty] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -52,12 +52,12 @@ const ItemDetails = () => {
       {/* Image */}
       <div className="flex justify-center mt-8">
         <div className="w-[260px] h-[260px] z-20 rounded-3xl border border-purple-400/20 flex items-center justify-center">
-          <Image
-            src={product?.image}
-            alt={product?.name}
-            width={220}
-            height={220}
-          />
+    <Image
+  src={product?.image?.trim() ? product.image : "/img/default.png"}
+  alt={product?.name || "Product"}
+  width={220}
+  height={220}
+/>
         </div>
       </div>
 
@@ -72,11 +72,17 @@ const ItemDetails = () => {
             {product?.description}
           </p>
 
-          <div className="inline-block text-[#22C55E] bg-[#22C55E33] p-1 rounded-full px-3 text-sm mt-2">
-            • {product?.stock > 0 ? "In Stock" : "Out of Stock"}
-          </div>
+         <div
+  className={`inline-block p-1 rounded-full px-3 text-sm mt-2 ${
+    product?.isAvailable
+      ? "text-[#22C55E] bg-[#22C55E33]"
+      : "text-red-400 bg-red-500/20"
+  }`}
+>
+  • {product?.isAvailable ? "In Stock" : "Out of Stock"}
+</div>
 
-          <p className="mt-2 text-lg font-bold">৳ {product?.price}</p>
+          <p className="mt-2 text-lg font-bold">$ {product?.price}</p>
         </div>
 
         {/* Quantity */}

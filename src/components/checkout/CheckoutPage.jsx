@@ -160,13 +160,18 @@ export default function CheckoutPage() {
               >
                 <div className="flex justify-between items-center border-b border-[#2A2448] pb-4">
                   <div className="flex gap-4 items-center">
-                    <Image
-                      src={item.product.image}
-                      alt={item.product.name}
-                      width={70}
-                      height={70}
-                      className="rounded-xl bg-[#FEE2E2]"
-                    />
+                 <Image
+  src={
+    item?.product?.image?.trim()
+      ? item.product.image
+      : "/img/default.png"
+  }
+  alt={item?.product?.name || "Product"}
+  width={70}
+  height={70}
+  className="rounded-xl bg-[#FEE2E2]"
+/>
+               
                     <div>
                       <h3 className="text-[16px]">{item.product.name}</h3>
                       <p className="text-sm text-gray-400">
